@@ -288,7 +288,7 @@ export const MeetingEditor: React.FC = () => {
 
       const prompt = `Extract all relevant details from this transcript and fill in these sections: - ${sectionsList}\n\nTRANSCRIPT:\n${transcript}\n\nReturn ONLY JSON with these keys filled in (leave empty if not applicable): ${JSON.stringify(Object.fromEntries(template.sections.map(s => [s.id, ''])))}`;
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/generate-summary`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generate-summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: prompt, style: 'professional' }),
@@ -320,7 +320,7 @@ export const MeetingEditor: React.FC = () => {
         setTranscriptionProgress('Generating AI summary...');
         const summaryPrompt = `Create a concise ${templateType} summary (2-3 sentences) of this meeting transcript:\n\n${transcript}`;
         
-        const summaryResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/generate-summary`, {
+        const summaryResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generate-summary`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ transcript: summaryPrompt, style: 'professional' }),
@@ -363,7 +363,7 @@ export const MeetingEditor: React.FC = () => {
       setTranscribing(true);
       setTranscriptionProgress('Extracting action items...');
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/extract-actions`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/extract-actions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: store.currentMeeting.transcript }),
@@ -405,7 +405,7 @@ export const MeetingEditor: React.FC = () => {
 
   const exportPDF = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/export-pdf`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/export-pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -419,7 +419,7 @@ export const MeetingEditor: React.FC = () => {
       if (!response.ok) throw new Error('PDF export failed');
       const data = await response.json();
       
-      const fileResponse = await fetch(`${process.env.REACT_APP_API_URL}${data.url}`);
+      const fileResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}${data.url}`);
       const blob = await fileResponse.blob();
       
       const blobUrl = window.URL.createObjectURL(blob);
@@ -439,7 +439,7 @@ export const MeetingEditor: React.FC = () => {
 
   const exportWord = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/export-word`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/export-word`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -453,7 +453,7 @@ export const MeetingEditor: React.FC = () => {
       if (!response.ok) throw new Error('Word export failed');
       const data = await response.json();
       
-      const fileResponse = await fetch(`${process.env.REACT_APP_API_URL}${data.url}`);
+      const fileResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}${data.url}`);
       const blob = await fileResponse.blob();
       
       const blobUrl = window.URL.createObjectURL(blob);
@@ -522,7 +522,7 @@ export const MeetingEditor: React.FC = () => {
 
   const createShareLink = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/create-share-link`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/create-share-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ meetingId: store.currentMeeting?.id }),
