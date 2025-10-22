@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "meeting-notes-backend/transcribe.ts", "meeting-notes-backend/server.ts"  ]
 }
