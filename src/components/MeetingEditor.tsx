@@ -240,7 +240,7 @@ export const MeetingEditor: React.FC = () => {
         setTranscriptionProgress(`Transcribing... (${formatDuration(elapsed)})`);
       }, 1000);
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/transcribe`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/transcribe`, {
         method: 'POST',
         body: formData,
       });
