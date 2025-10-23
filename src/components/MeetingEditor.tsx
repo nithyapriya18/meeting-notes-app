@@ -543,47 +543,48 @@ export const MeetingEditor: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!user || !store.currentMeeting) return;
+  if (!user || !store.currentMeeting) return;
 
-    try {
-      setSaveStatus('Saving...');
+  try {
+    setSaveStatus('Saving...');
 
-      const dataToSave: any = {
-        id: store.currentMeeting.id,
-        user_id: user.id,
-        title: store.currentMeeting.title || 'Untitled Meeting',
-        template_type: templateType,
-        speaker_tags: store.currentMeeting.speaker_tags || {},
-        duration_minutes: Math.floor(timeElapsed / 60),
-        is_billable: isBillable,
-        updated_at: new Date().toISOString(),
-      };
+    const dataToSave: any = {
+      id: store.currentMeeting.id,
+      user_id: user.id,
+      title: store.currentMeeting.title || 'Untitled Meeting',
+      template_type: templateType,
+      speaker_tags: store.currentMeeting.speaker_tags || {},
+      duration_minutes: Math.floor(timeElapsed / 60),
+      is_billable: isBillable,
+      updated_at: new Date().toISOString(),
+    };
 
-      if (saveChoices.saveTranscript) {
-        dataToSave.transcript = store.currentMeeting.transcript || '';
-      }
-      if (saveChoices.saveNotes) {
-        dataToSave.notes = getFormattedNotes() || '';
-      }
-
-      const { error } = await supabase
-        .from('meetings')
-        .upsert(dataToSave, { onConflict: 'id' })
-        .select();
-
-      if (error) throw error;
-
-      if (saveChoices.deleteAudio) {
-        audioChunksRef.current = [];
-        setAudioRecorded(false);
-      }
-
-      setSaveStatus('Saved!');
-      setTimeout(() => setSaveStatus(''), 3000);
-    } catch (error) {
-      setSaveStatus('Error saving');
+    if (saveChoices.saveTranscript) {
+      dataToSave.transcript = store.currentMeeting.transcript || '';
     }
-  };
+    if (saveChoices.saveNotes) {
+      dataToSave.notes = getFormattedNotes() || '';
+    }
+
+    const { error } = await supabase
+      .from('meetings')
+      .upsert(dataToSave, { onConflict: 'id' })
+      .select();
+
+    if (error) throw error;
+
+    if (saveChoices.deleteAudio) {
+      audioChunksRef.current = [];
+      setAudioRecorded(false);
+    }
+
+    setSaveStatus('✅ Meeting saved successfully!');
+    setTimeout(() => setSaveStatus(''), 3000);
+  } catch (error) {
+    setSaveStatus('❌ Error saving: ' + (error as Error).message);
+    setTimeout(() => setSaveStatus(''), 3000);
+  }
+};
 
   const getFormattedNotes = () => {
   let formattedNotes = '';
