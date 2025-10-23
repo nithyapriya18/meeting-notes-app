@@ -586,28 +586,32 @@ export const MeetingEditor: React.FC = () => {
   };
 
   const getFormattedNotes = () => {
-    let formattedNotes = '';
+  let formattedNotes = '';
+  
+  // Add user's manual notes first
+  if (userNotes?.trim().length > 0) {
+    formattedNotes += `USER NOTES:\n${userNotes}\n\n`;
+  }
+  
+  // Add extracted template data with readable labels
+  const template = TEMPLATE_SECTIONS[templateType as keyof typeof TEMPLATE_SECTIONS];
+  if (template) {
+    const extractedData = template.sections
+      .filter(section => templateData[section.id]?.trim?.().length > 0)
+      .map(section => {
+        const value = templateData[section.id];
+        return value ? `${section.label}:\n${value}` : '';
+      })
+      .filter(Boolean)
+      .join('\n\n');
     
-    // Add user's manual notes first
-    if (userNotes && userNotes.trim().length > 0) {
-      formattedNotes += `USER NOTES:\n${userNotes}\n\n`;
+    if (extractedData) {
+      formattedNotes += `EXTRACTED DETAILS:\n\n${extractedData}`;
     }
-    
-    // Add extracted template data with readable labels
-    const template = TEMPLATE_SECTIONS[templateType as keyof typeof TEMPLATE_SECTIONS];
-    if (template) {
-      const extractedData = template.sections
-        .filter(section => templateData[section.id] && templateData[section.id].trim().length > 0)
-        .map(section => `${section.label}:\n${templateData[section.id]}`)
-        .join('\n\n');
-      
-      if (extractedData) {
-        formattedNotes += `EXTRACTED DETAILS:\n\n${extractedData}`;
-      }
-    }
-    
-    return formattedNotes;
-  };
+  }
+  
+  return formattedNotes;
+};
 
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
